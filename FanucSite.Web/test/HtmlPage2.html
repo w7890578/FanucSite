@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script>
+        function Check() {
+            var str = document.getElementById("txtPhone").value;
+            //var myreg = /^1\d{10}$/;
+            //sdfsdfdsf@fosx.com
+            //010-45454545
+            //var reg = /^\w+@\w+\.\w+/
+            //var reg = /^0?(13[0-9]|14[0-9])[0-9]{8}$/
+            var reg = /(^0\d{2,3}-\d{7,8}-\d{3,}|\+86-\d{7,})/;
+            alert(reg.test(str));
+            //var myreg =/^0{0,1}(13[0-9]|14[0-9]|17[0-9]|15[5-9]|15[0-3]|18[0-9])[0-9]{8}$/; //增加147号段
+          
+        }
+        function isEmail(str) {
+            //var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+            var reg = /^[\w-\.]+@\w+\.\w+/;
+            return reg.test(str);
+        }
+        var str = 'test@hotmail.com';
+        document.write(isEmail(str) + '<br />');
+        var str2 = 'test@sima.vip.com';
+        document.write(isEmail(str2) + '<br />');
+        var str3 = 'te-st@qq.com.cn';
+        document.write(isEmail(str3) + '<br />');
+        var str4 = 'te_st@sima.vip.com';
+        document.write(isEmail(str4) + '<br />');
+        var str5 = 'te.._st@sima.vip.com';
+        document.write(isEmail(str5) + '<br />');
+        var str6 = '23423423@sima.vip.com';
+        document.write(isEmail(str6) + '<br />');
+    </script>
+</head>
+<body>
+    <input type="text" id="txtPhone" />
+    <input type="button" value="校验" onclick="Check()" />
+</body>
+</html>

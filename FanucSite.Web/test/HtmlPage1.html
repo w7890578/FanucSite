@@ -1,0 +1,58 @@
+﻿<form id="loginForm" method="get" enctype="application/x-www-form-urlencoded">
+    <div class="login" style="height: 340px;">
+        <ul style="float: left; width: 147px;">
+            <li class="zc" style="padding-left: 0px; margin-top: 0px; height: 10px; padding-right: 10px; zoom: 1;"></li>
+            <li class="zc" style="margin-top: 0px; padding-left: 0px; height: auto; padding-right: 10px; zoom: 1;">
+                <h2 style="height: 25px; line-height: 25px; font-size: 14px;">温馨提示：</h2>
+            </li>
+            <li class="zc" style="margin-top: 0px; line-height: 20px; color: rgb(102, 102, 102); padding-left: 0px; height: auto; padding-right: 10px; zoom: 1;">1、12306.cn网站自3月16日起启用图形验证码</li>
+            <li class="zc" style="margin-top: 0px; line-height: 20px; color: rgb(102, 102, 102); padding-left: 0px; height: auto; padding-right: 10px; zoom: 1;">2、12306.cn网站每日07:00~23:00提供服务</li>
+            <li class="zc" style="margin-top: 0px; line-height: 20px; color: rgb(102, 102, 102); padding-left: 0px; height: auto; padding-right: 10px; zoom: 1;">3、在12306.cn网站购票、改签和退票须不晚于开车前30分钟；办理“变更到站”业务时，请不晚于开车前48小时。</li>
+        </ul>
+        <ul style="float: left; width: 510px; border-left-width: 1px; border-left-style: solid; border-left-color: rgb(187, 187, 187);">
+            <li><span class="label">登录名：</span>
+                <input id="username" tabindex="1" name="loginUserDTO.user_name" type="text" class="inptxt w200" style="color: rgb(51, 51, 51); width: 309px;">
+            </li>
+            <li><span class="label">密码：</span>
+                <input id="password" name="userDTO.password" tabindex="2" type="password" class="inptxt w200" maxlength="25" style="color: rgb(51, 51, 51); width: 309px;">
+                <a href="#" id="forget_password_id" shape="rect">忘记用户名/密码？</a>
+            </li>
+            <li id="mypasscode1" data-code_type="login" data-touclick-type="inside" style="display: none">
+                <!--要引入的验证码标签 -->
+                <script>var targettype = ['Z']; var targetdiv = ['mypasscode1']; var targetelement = [''];</script>
+                <script src="/otn/resources/js/newpasscode/new.js" xml:space="preserve"></script>
+                <script type="text/javascript" charset="utf-8" async="" src="/otn/resources/js/newpasscode/event.js"></script>
+            </li>
+            <input type="hidden" name="randCode" data-targetdiv="mypasscode1" id="randCode" style="color: rgb(51, 51, 51); display: none; width: 309px;" value=""><div style="height: 12px;">
+                <li id="error_msgmypasscode1" class="error" style="display: none; position: absolute;"></li>
+            </div>
+            <li class="dl captchaButton" data-touclick-name="" style="margin-top: 0px; height: auto; padding-left: 0px; zoom: 1;"><span style="float: left; padding-right: 2px; display: block; height: 30px; width: 65px; text-align: right;">验证码：</span><div class="touclick" name="touclick-randCode" style="float: left; display: block;">
+                <div class="touclick-wrapper">
+                    <div class="touclick-bgimg touclick-reload touclick-reload-normal"></div>
+                    <div class="touclick-bgimg touclick-arrow"></div>
+                    <div class="touclick-img-par touclick-bgimg" style="width: 293px; height: 190px; background-position: 0px -583px;">
+                        <img class="touclick-image" alt="" src="/otn/passcodeNew/getPassCodeNew?module=login&amp;rand=sjrand&amp;0.12425795826129615" style="display: block; visibility: visible;"><div class="touclick-wait" style="left: 121.5px; top: 84px; display: none;">
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 20px; top: 0px; font-size: 0px; background-position: 0px -123px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 34.14px; top: 5.860000000000001px; font-size: 0px; background-position: 0px -133px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 40px; top: 20px; font-size: 0px; background-position: 0px -143px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 34.14px; top: 34.14px; font-size: 0px; background-position: 0px -153px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 20px; top: 40px; font-size: 0px; background-position: 0px -163px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 5.860000000000001px; top: 34.14px; font-size: 0px; background-position: 0px -173px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 0px; top: 20px; font-size: 0px; background-position: 0px -183px;"></div>
+                            <div class="touclick-bgimg" style="width: 10px; height: 10px; position: absolute; left: 5.860000000000001px; top: 5.860000000000001px; font-size: 0px; background-position: 0px -193px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <a href="../gonggao/yzmsysm.html" target="_blank" style="display: block; float: right; margin-right: 11px; font-size: 12px; line-height: 25px;">验证码如何使用？</a><a href="#" class="btn200s" id="loginSub" shape="rect" style="width: 155px; float: left; margin-left: 75px;">登录</a>
+                <a href="/otn/regist/init" class="btn200" shape="rect" style="width: 155px; float: left; margin-left: 6px;">快速注册</a></li>
+            <!-- <li class="txt" th:text="#{index_yushouqi(${yshouStart},${yshouEnd})}">今天可售6月1日—6月20日的车票</li> -->
+
+            <li class="txt" style="height: 4px; display: none;"></li>
+
+
+
+
+        </ul>
+    </div>
+</form>

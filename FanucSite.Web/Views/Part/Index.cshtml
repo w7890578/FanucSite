@@ -1,0 +1,758 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/main.cshtml";
+}
+
+<script src="/Scripts/ajaxfileupload.js"></script>
+<div class="searchdiv">
+    <fieldset>
+        <legend>信息查询</legend>
+        <form id="fmSearch" method="post">
+            <table>
+                <tr>
+                    <td style="width: 150px; text-align: right;">物料编号:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="MaterialNumber" /></td>
+                    <td style="width: 150px; text-align: right;">物料描述:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="MaterialDescription" /></td>
+                    <td style="width: 150px; text-align: right;">旧型号:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="OldModel" /></td>
+                    <td style="width: 150px; text-align: right;">说明:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Explain" /></td>
+
+                </tr>
+                <tr>
+
+                    <td style="width: 150px; text-align: right;">一级分类:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="OneLevelSort" /></td>
+                    <td style="width: 150px; text-align: right;">二级分类:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="TwoLevelSort" /></td>
+                    <td style="width: 150px; text-align: right;">名称:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Name" /></td>
+                    <td></td>
+                    <td>
+                        <a id="btnSearch" href="###" class="easyui-linkbutton"
+                            data-options="iconCls:'icon-search'">&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+<table id="grid" style="width: 100%;" class="easyui-datagrid" data-options="
+                title: '部件信息维护',
+                iconCls: 'icon-view',
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 15,
+                pageList: [10, 15, 20],
+                rownumbers: true,
+                singleSelect: true,
+                sortOrder: 'asc',
+                remoteSort: false">
+    <thead>
+        <tr>
+
+            <th data-options="field: 'ID', align: 'center', hidden: true">主键</th>
+
+            <th data-options="field: 'MaterialNumber', align: 'center'">物料编号</th>
+
+            <th data-options="field: 'MaterialDescription', align: 'center'">物料描述</th>
+
+            <th data-options="field: 'OldModel', align: 'center'">旧型号</th>
+
+            <th data-options="field: 'OneLevelSort', align: 'center'">一级分类</th>
+
+            <th data-options="field: 'TwoLevelSort', align: 'center'">二级分类</th>
+
+            <th data-options="field: 'Name', align: 'center'">名称</th>
+
+            <th data-options="field: 'Explain', align: 'center'">说明</th>
+
+            <th data-options="field: 'IsStop', align: 'center',formatter:ShowIsStop">停产</th>
+
+            <th data-options="field: 'Price', align: 'center'">价格(元)</th>
+
+            <th data-options="field: 'AccessCount', align: 'center'">访问量</th>
+
+            <th data-options="field: 'GoodComment', align: 'center'">好评</th>
+
+            <th data-options="field: 'BadComment', align: 'center'">差评</th>
+
+            <th data-options="field: 'CommentCount', align: 'center'">评论数</th>
+        </tr>
+    </thead>
+</table>
+<!--表格涉及的按钮-->
+<div id="DivGridToolBar">
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="ShowAddDialog()">添加</a>			</td>
+            <td>
+                <div class="datagrid-btn-separator"></div>
+            </td>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true" onclick="ShowEditOrViewDialog()">修改</a>			</td>
+            <td>
+                <div class="datagrid-btn-separator"></div>
+            </td>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="Delete()">删除</a>			</td>
+            <td>
+                <div class="datagrid-btn-separator"></div>
+            </td>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" onclick="ShowEditOrViewDialog('view')">查看</a>			</td>
+            <td>
+                <div class="datagrid-btn-separator"></div>
+            </td>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true" onclick="javascript: $('#grid').datagrid('reload');">刷新</a>			</td>
+        </tr>
+    </table>
+</div>
+<div style="text-align: center; width: 100%; color: red; display: none;" id="emptymsgdiv">没有查询到相关数据</div>
+<!--------------------------添加/修改信息的弹出层---------------------------->
+<div id="DivAdd" class="easyui-dialog" style="width: 1105px; height: 500px; padding: 10px 20px"
+    closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit',buttons: '#dlg-buttons'">
+    <form id="fmDetail" method="post" novalidate enctype="multipart/form-data">
+        <input name="ID" type="hidden" value="" />
+        <table class="tableborders" cellspacing="1" cellpadding="1">
+            <tr>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">物料编号:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="MaterialNumber" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">物料描述:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="MaterialDescription" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">旧型号:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="OldModel" />
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">一级分类:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="OneLevelSort" required="required" />
+                </td>
+
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">二级分类:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="TwoLevelSort" required="required" />
+                </td>
+
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">名称:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="Name" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">说明:</td>
+                <td style="width: 150px;">
+                    <input type="text" style="width: 96%; margin-left: 2px;" class="easyui-validatebox" name="Explain" />
+                </td>
+
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">价格:</td>
+                <td colspan="3">
+                    <input type="text" class="easyui-numberbox" name="Price" required="required" data-options="min:0,precision:2" style="margin-left: 2px;" />
+                    &nbsp;&nbsp;<label><input type="checkbox" value="1" name="IsStop" />停产</label>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">上传图片:</td>
+                <td colspan="5">
+                    <input type="button" value="上  传" id="btnupload" />
+                    <input type="file" name="user_log" id="user_log" style="width: 250px; display: none;" onchange="CheckFile()" />&nbsp;&nbsp;<label style="color: red;"></label>&nbsp;&nbsp;
+                    <label id="uploadMsg" style="color: red;"></label>
+                </td>
+            </tr>
+            <tr id="yulan_tr">
+                <td style="width: 150px; text-align: right; background-color: #E5EFFB;">预览:</td>
+                <td colspan="5">
+                    <div id="yulan_div">
+
+                        <div style="float: left; margin-left: 10px; position: relative;">
+                            <div style="overflow: hidden; width: 200px; height: 180px; border: 1px solid rgb(235, 235, 235);">
+                                <img name="ImgUrl" src="/images/Part/20150810165437.jpg" style="visibility: visible; width: 200px; height: 150px; margin-left: 0px; margin-top: 15px;">
+                            </div>
+                            <input type="text" style="width: 200px;" placeholder="请输入图片说明" name="ImgDescription">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAOVSURBVHjaYtTUdGdAA4K/fv3U+Pv3rw+QLfT//3+Gf//+vWNiYtjCwsJyAyj2HiT2//8/sGKAAGJB1gkU9Pj581eNnJyctaamMgM/Py8DIyMDw+fPXxlu3rxfdfPmjaPMzIwtTEzMO2B6AAKIBaH5fw4LC1tHeHgQt7u7PYOOjhIDNzcb2IBfv/4x3LjxiGHr1n3WK1duXPPx45sKJiamKSB9AAHECPIC0GZ3ZmbWzQkJkazu7rYMLCyMDD9//gYZCzWcgYGVlRUozsxw9Oh5hv7+Gb8/fXrnC+TvBAggZhERZb7fv3/PdnCwV7C3twT69w+DlpYcw5s3HxkeP34FdP53IPsDg6qqNAMXFxvQIA4GoGXMFy9eVgK6eg1AADH9/ftbW0hIxEpFRQms0MBAlYGDg51BQ0OegZ2dneH58zdAMRUGKSlhBnFxQYY7dx4CvfSHQVBQyAqkFyCAmIWEFDOlpaVtgQHH8O7dB4aXLz8wqKjIMHBysoE1SUqKMCgoSIC90te3lGHNmu0MDx8+Yfjx4xvQmz9eAgQQCzAwhBiBIfX69RugwC+GR4+eAl3yliEx0Y+Bl5eDQU5ODBwG3d0LGdau3QH0AjMwLFiBruQEBjCTEEAAsYBC+du3HwxPnjxnAMY90JCfoLBlePXqLdAAabDNX778AHvl37+/QP9DYubfP0haAAggJlAi+fr1M8Pbt2+Bml4z8PBwMxQURDMoK0uDbf78+QfYJY2N2Qy2thZA//8CGsIMtOg70MI/7wACiAkYkluAfmH48+cPMOHwMbS1FTJoaspB/bwYqHE6w4cP3xn4+DgYWltzgAGqywCMNbABQBdsAQggJmAsX/3+/esxkPNAoX7jxgNQomKYMWMtw65dRxkuXLjGMHHiEobv338x3Lv3DEhDLAO6+hjQq1cBAohRWdkOqOGvOwcHz2Z1dU1WcXEJBgkJYYbbtx+AExIogH/9+s2gra0KDOgPwLTxmOHKlfO/v3z55AtM0jsBAggYjfKg0Lz769eP958/f7FnZ2djAyYUBhERQWBUcgLDhItBWFiY4f37j8AYeshw/frVr1++fCwFal4O8iZAAIENAKdpRoZTwLg99/Llc8VPnz7JffnyFWQwMAa+Mdy/fw+YmW4w3Lp1/eiPH19zgJqXwfIQQACBvQDNiaBsC/K/IDCQNICKfNjYWIVAYQNMH++AIb4FGPrg7IycgwECDADIUZC5UWvTuwAAAABJRU5ErkJggg==" style="position: absolute; top: 0px; right: -5px; cursor: pointer;" onclick="closeparent(this)">
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <div style="float: left; text-align: left; color: red;">注意：批量新增时，每条记录请以“，”号进行分隔“；”号结束。（ps：注意区分符号的中文和英文，此处需要输入的是中文符号“，”和“；”）</div>
+                    <div style="float: right; padding-right: 20px; padding-bottom: 10px;"><a href="###" onclick="AddNewRow()">新增一条</a>&nbsp;&nbsp;<a href="###" onclick="BatchAdd()">批量新增</a></div>
+                    <table class="classtable" cellspacing="0" id="childrentable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>子物料编号</th>
+                                <th>备注 </th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ondblclick="NewRowTrEdit(this)" style="cursor: pointer;">
+                                <td>1</td>
+                                <td>
+                                    <input type="text" value="" style="width: 100%;" placeholder="请输入子物料编号" /></td>
+                                <td>
+                                    <input type="text" value="" style="width: 100%;" placeholder="请输入备注" /></td>
+                                <td nowrap><a style="width: 30px;" href="###" onclick="NewRowSave(this)">保存</a>&nbsp;&nbsp;<a style="width: 30px; display: none;" href="###" onclick="NewRowEdit(this)">编辑</a>&nbsp;&nbsp;<a href="###" style="width: 30px;" onclick="NewRowDelete(this)">删除</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div style="text-align: center; padding-top: 10px" id="DivAddToolBar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" onclick="SaveEntity()">&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">&nbsp;取&nbsp;&nbsp;消&nbsp;&nbsp;</a>
+    </div>
+
+</div>
+
+<div id="childrendig" class="easyui-dialog" title="批量新增子物料编号"
+    data-options="iconCls:'icon-add',resizable:true,modal:true,buttons:'#childrendigbuttons',closed:true"
+    style="width: 520px; height: 330px; padding: 10px;">
+    <textarea style="width: 98%; height: 95%;" rows="3" cols="20" id="txtarachildbatch"></textarea>
+</div>
+
+
+<div id="childrendigbuttons" style="text-align: center; padding-top: 10px">
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="BatchAddSave()">&nbsp;保&nbsp;&nbsp;存&nbsp;&nbsp;</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#childrendig').dialog('close')">&nbsp;取&nbsp;&nbsp;消&nbsp;&nbsp;</a>
+</div>
+
+<script type="text/javascript">
+
+    function BatchAdd() {
+        $("#childrendig").dialog('open');
+    }
+    function BatchAddSave() {
+        var errorcount = 0;
+        var valueAll = $("#txtarachildbatch").val().Trim('；');
+        var htmlStr = '';
+        $.each(valueAll.split('；'), function (index, value) {
+            var detailarray = value.Trim('，').split('，');
+            //排除乱数据
+            if (detailarray.length == 2) {
+
+                htmlStr += '<tr ondblclick="NewRowTrEdit(this)"><td></td>';
+                $.each(detailarray, function (i, item) {
+                    htmlStr += '<td>' + item.replace('\n', '').trim('\n').Trim() + '</td>';
+                });
+                htmlStr += '<td nowrap><a style="width:30px;display: none;"  href="###" onclick="NewRowSave(this)"  >保存</a>&nbsp;&nbsp;<a style="width:30px;"  href="###" onclick="NewRowEdit(this)" >编辑</a>&nbsp;&nbsp;<a style="width:30px;"  href="###" onclick="NewRowDelete(this)">删除</a></td>';
+                htmlStr += '</tr>';
+            }
+            else { errorcount++; }
+        });
+        if (errorcount > 0) {
+            alert("一共过滤了" + errorcount + "条不合法数据");
+        }
+        $("#childrentable tbody").append($(htmlStr));
+        AddSort();
+        $("#childrendig").dialog('close');
+    }
+
+    //调整序号
+    function AddSort() {
+        $("#childrentable tbody tr").each(function (index) {
+            $(this).find("td").eq(0).html(index + 1);
+        });
+    }
+
+    function AddNewRow() {
+        var htmlStr = ''
+        + '<tr ondblclick="NewRowTrEdit(this)"> '
+            + '<td>1</td>'
+
+            + '<td><input type="text" value="" style="width:100%;" placeholder="请输入子物料编号"/></td>'
+            + '<td><input type="text" value="" style="width:100%;" placeholder="请输入备注"/></td>'
+            + '<td nowrap><a style="width:30px;"  href="###" onclick="NewRowSave(this)">保存</a>&nbsp;&nbsp;<a style="width:30px;display: none;"  href="###" onclick="NewRowEdit(this)"  >编辑</a>&nbsp;&nbsp;<a style="width:30px;"  href="###" onclick="NewRowDelete(this)">删除</a></td>'
+        + '</tr>';
+        $("#childrentable tbody").append($(htmlStr));
+        AddSort();
+    }
+    function NewRowTrEdit(obj) {
+        $.each($(obj).find("td"), function () {
+            if ($(this).find("a").length > 0) {
+                $.each($(this).find("a"), function () {
+
+                    if ($(this).html() == "编辑" && $(this).css("display") != "none") {
+                        $(this).click();
+                    }
+                });
+            }
+        });
+    }
+    function NewRowEdit(obj) {
+        var parent = $(obj).parent();
+        $.each(parent.parent().find("td"), function (index) {
+            var value = $(this).html();
+            if (index < 3 && index > 0) {
+                var placeholderStr = "";
+                switch (index) {
+                    case 1: placeholderStr = "请输入子物料编号";
+                        break;
+                    default: placeholderStr = "请输入备注";
+                        break;
+                }
+                var htmlStr = '<input type="text" value="' + value + '" style="width:100%;" placeholder="' + placeholderStr + '"/>';
+                $(this).html(htmlStr);
+            }
+        });
+        $(obj).hide();
+        $.each(parent.find("a"), function () {
+            if ($(this).html() == "保存") {
+                $(this).show();
+            }
+        })
+    }
+
+    function NewRowDelete(obj) {
+        var parent = $(obj).parent().parent();
+        parent.remove();
+        AddSort();
+    }
+    function NewRowSave(obj) {
+        var errorcount = 0;
+        var parent = $(obj).parent();
+        $.each(parent.parent().find("td"), function () {
+            if ($(this).find("input[type='text']").length > 0) {
+                var value = $(this).find("input[type='text']").val();
+                if (value == "") {
+                    errorcount++;
+                }
+                $(this).html(value);
+            }
+        });
+        if (errorcount > 0) {
+            alert("请将内容填写完整");
+            NewRowEdit(obj);
+            return;
+        }
+        $(obj).hide();
+        $.each(parent.find("a"), function () {
+            if ($(this).html() == "编辑") {
+                $(this).show();
+            }
+        })
+
+    }
+    //上传图片
+    function CheckFile() {
+        var f = document.getElementById("user_log");
+        if (f.value == "") {
+            $("#uploadMsg").html("请上传图片");
+            return false;
+        }
+        else {
+            if (!/\.(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(f.value)) {
+                $("#uploadMsg").html("图片类型必须是.gif,jpeg,jpg,png中的一种");
+                return false;
+            }
+        }
+        //检测上传文件的大小        
+        var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+        var fileSize = 0;
+        if (isIE && !f.files) {
+            var filePath = f.value;
+            var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+            var file = fileSystem.GetFile(filePath);
+            fileSize = file.Size;
+        } else {
+            fileSize = f.files[0].size;
+        }
+
+        var size = fileSize / 1024 * 1024;
+
+        //if (size > (1024 * 512)) {
+        //   // $("#uploadMsg").html("图片大小不能超过512KB");
+        //    //return false
+        //} else {
+        $.ajaxFileUpload
+            (
+                {
+                    url: '/Part/UploadImg', //用于文件上传的服务器端请求地址
+                    type: 'post',
+                    secureuri: false, //一般设置为false
+                    fileElementId: 'user_log', //文件上传空间的id属性  <input type="file" id="file" name="file" />
+                    dataType: 'json', //返回值类型 一般设置为json
+                    success: function (data, status)  //服务器成功响应处理函数
+                    {
+                        if (data.msg == "success") {
+                            $("#imgshow").attr("src", data.imgurl).show();
+                            $("#yulan_tr").show();
+                            //$("#ImgUrl").val(data.imgurl);
+
+                            var htmlstr = ' <div style="float: left; margin-left: 10px;position: relative;">'
+                   + '<div'
+                           + ' style="overflow: hidden; width: 200px; height: 180px; border: 1px solid rgb(235, 235, 235);">' + ' <img name="ImgUrl" src="' + data.imgurl + '"' + 'style="visibility: visible; width: 200px; height: 150px; margin-left: 0px; margin-top: 15px;" />'
+                    + '</div>'
+                    + '<input type="text" style="width: 200px;" placeholder="请输入图片说明" name="ImgDescription">'
+                    + '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAOVSURBVHjaYtTUdGdAA4K/fv3U+Pv3rw+QLfT//3+Gf//+vWNiYtjCwsJyAyj2HiT2//8/sGKAAGJB1gkU9Pj581eNnJyctaamMgM/Py8DIyMDw+fPXxlu3rxfdfPmjaPMzIwtTEzMO2B6AAKIBaH5fw4LC1tHeHgQt7u7PYOOjhIDNzcb2IBfv/4x3LjxiGHr1n3WK1duXPPx45sKJiamKSB9AAHECPIC0GZ3ZmbWzQkJkazu7rYMLCyMDD9//gYZCzWcgYGVlRUozsxw9Oh5hv7+Gb8/fXrnC+TvBAggZhERZb7fv3/PdnCwV7C3twT69w+DlpYcw5s3HxkeP34FdP53IPsDg6qqNAMXFxvQIA4GoGXMFy9eVgK6eg1AADH9/ftbW0hIxEpFRQms0MBAlYGDg51BQ0OegZ2dneH58zdAMRUGKSlhBnFxQYY7dx4CvfSHQVBQyAqkFyCAmIWEFDOlpaVtgQHH8O7dB4aXLz8wqKjIMHBysoE1SUqKMCgoSIC90te3lGHNmu0MDx8+Yfjx4xvQmz9eAgQQCzAwhBiBIfX69RugwC+GR4+eAl3yliEx0Y+Bl5eDQU5ODBwG3d0LGdau3QH0AjMwLFiBruQEBjCTEEAAsYBC+du3HwxPnjxnAMY90JCfoLBlePXqLdAAabDNX778AHvl37+/QP9DYubfP0haAAggJlAi+fr1M8Pbt2+Bml4z8PBwMxQURDMoK0uDbf78+QfYJY2N2Qy2thZA//8CGsIMtOg70MI/7wACiAkYkluAfmH48+cPMOHwMbS1FTJoaspB/bwYqHE6w4cP3xn4+DgYWltzgAGqywCMNbABQBdsAQggJmAsX/3+/esxkPNAoX7jxgNQomKYMWMtw65dRxkuXLjGMHHiEobv338x3Lv3DEhDLAO6+hjQq1cBAohRWdkOqOGvOwcHz2Z1dU1WcXEJBgkJYYbbtx+AExIogH/9+s2gra0KDOgPwLTxmOHKlfO/v3z55AtM0jsBAggYjfKg0Lz769eP958/f7FnZ2djAyYUBhERQWBUcgLDhItBWFiY4f37j8AYeshw/frVr1++fCwFal4O8iZAAIENAKdpRoZTwLg99/Llc8VPnz7JffnyFWQwMAa+Mdy/fw+YmW4w3Lp1/eiPH19zgJqXwfIQQACBvQDNiaBsC/K/IDCQNICKfNjYWIVAYQNMH++AIb4FGPrg7IycgwECDADIUZC5UWvTuwAAAABJRU5ErkJggg=="'
+                    + '        style="position: absolute; top: 0px; right: -5px; cursor: pointer;"'
+                    + '        onclick="closeparent(this)">'
+                    + '</div>';
+                            $("#yulan_div").append($(htmlstr));
+
+                            $("#uploadMsg").html("");
+                            return true;
+                        }
+                        else {
+                            $("#uploadMsg").html(data.error);
+                            return false;
+                        }
+                    },
+                    error: function (data, status, e)//服务器响应失败处理函数
+                    {
+                        alert(e);
+                    }
+                }
+            )
+    }
+    // }
+
+    function closeparent(obj) {
+        $(obj).parent().remove();
+    }
+
+    function ShowIsStop(val, row, index) {
+        if (val == "1") {
+            return '<label style="color:red;">√</label>';
+        }
+        else {
+            return "--";
+        }
+    }
+    //图片实体 与后台属性一致
+    function Part_Pic(ImgDescription, ImgUrl) {
+        this.ImgDescription = ImgDescription;
+        this.ImgUrl = ImgUrl;
+        return this;
+    }
+    //子物料实体 与后台属性一致
+    function Part_Children(ChildMaterialNumber, Remark) {
+        this.ChildMaterialNumber = ChildMaterialNumber;
+        this.Remark = Remark;
+        return this;
+    }
+
+    //保存
+    function SaveEntity() {
+        //定义图片集合
+        var Part_PicList = [];
+        $.each($("#yulan_div").find("div"), function () {
+            var desobj = $(this).find("input[name='ImgDescription']");
+            var urlobj = $(this).find("div").find("img[name='ImgUrl']");
+            if (desobj.length > 0 && urlobj.length > 0) {
+                var picobj = new Part_Pic(desobj.val(), urlobj.attr("src"));
+                Part_PicList.push(picobj); //填充数组
+            }
+        });
+
+        //定义子物料集合
+        var Part_ChildrenList = [];
+        $.each($("#childrentable tbody tr"), function () {
+            var childrenobj = new Part_Children();
+            var tdObj = $(this).find("td");
+            $.each(tdObj, function (index) {
+                //是否有文本框
+                var hasText = tdObj.find("input[type='text']").length;
+
+                if (hasText <= 0) {
+                    //子物料编号
+                    if (index == 1) {
+                        childrenobj.ChildMaterialNumber = $(this).html();
+                    }
+                    else if (index == 2)//备注
+                    {
+                        childrenobj.Remark = $(this).html();
+                    }
+                }
+            });
+
+            if (childrenobj.ChildMaterialNumber != undefined) {
+                Part_ChildrenList.push(childrenobj);//填充数组
+            }
+
+        });
+
+        $('#fmDetail').form('submit', {
+            url: "/Part/Save",
+            onSubmit: function (param) { //提交时触发
+                //easyui提交时增加参数
+                param.Part_PicList = JSON.stringify(Part_PicList);//关键点，对数组进行json序列化，不然无法传递到服务端
+                param.Part_ChildrenList = JSON.stringify(Part_ChildrenList);
+                var flag = $(this).form('validate');    //是否通过验证 
+                if (flag) {
+                    $('#grid').datagrid("loading"); //如果通过验证让datagrid显示载入状态
+                }
+                return flag;
+            },
+            success: function (res) {
+                if (res == "ok") {
+                    $.messager.show({
+                        title: '操作提示',
+                        msg: '<img src="/images/icons/bigyes.png" />&nbsp;&nbsp;保存成功',
+                        timeout: 2000,
+                        showType: 'slide'
+                    });
+
+                    $('#DivAdd').dialog('close');         //关闭弹出框
+                    $('#fmDetail').form('clear');         //清除表单数据。
+                    $('#btnSearch').click();              //重新加载数据
+                }
+                else {
+                    $.messager.show({
+                        title: '错误提示',
+                        msg: '<img src="/images/icons/bigno.png" />&nbsp;&nbsp;保存失败！请联系管理员或尝试重新操作。',
+                        timeout: 0,
+                        width: 320,
+                        showType: 'slide'
+                    });
+
+                }
+            }
+        })
+    }
+    //删除
+    function Delete() {
+
+        $.messager.confirm("操作提示", "您确定删除这条数据吗？", function (data) {
+            if (data) {
+                var row = $('#grid').datagrid('getSelected'); //获取选中行
+                if (!row) {                                       //没有选中行
+                    $.messager.alert('提示', '请选择一行进行操作!', 'info');
+                    return false;
+                }
+                $.ajax({
+                    url: "/Part/Delete",
+                    type: "POST",
+                    data: { "ID": row["ID"] },
+                    success: function (res) {
+                        if (res == "ok") {
+                            $.messager.alert("操作提示", "操作成功！", "info");
+                            $('#btnSearch').click();
+                        }
+                        else {
+                            $.messager.alert("操作提示", "操作失败！", "error");
+                            return false;
+                        }
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    }
+                })
+            }
+        });
+
+
+    }
+    //添加显示弹框
+    function ShowAddDialog() {
+        $('#fmDetail').form('load', {
+            ID: '',
+            MaterialNumber: '',
+            MaterialDescription: '',
+            OldModel: '',
+            OneLevelSort: '',
+            TwoLevelSort: '',
+            Name: '',
+            Explain: '',
+            IsStop: '',
+            Price: '',
+            AccessCount: '',
+            GoodComment: '',
+            BadComment: '',
+            CommentCount: '',
+        });
+        $("#yulan_div").html("");
+        $('#DivAdd').dialog({
+            title: '增加',
+            iconCls: 'icon-add'
+        }).dialog('open');
+        $("#DivAddToolBar").show();
+    }
+
+
+    function ShowEditOrViewDialog(view) {
+        var row = $('#grid').datagrid('getSelected'); //获取选中行
+        if (!row) {                                       //没有选中行
+            $.messager.alert('提示', '请选择一行进行操作!', 'info');
+            return false;
+        }
+        //取值赋值 
+        $.ajax({
+            url: "/Part/Get_Details",
+            type: "POST",
+            dataType: "json",
+            data: { "ID": row["ID"] },
+            success: function (res) {
+                $('#fmDetail').form('load', {
+                    ID: res.ID,
+                    MaterialNumber: res.MaterialNumber,
+                    MaterialDescription: res.MaterialDescription,
+                    OldModel: res.OldModel,
+                    OneLevelSort: res.OneLevelSort,
+                    TwoLevelSort: res.TwoLevelSort,
+                    Name: res.Name,
+                    Explain: res.Explain,
+                    IsStop: res.IsStop,
+                    Price: res.Price,
+                    AccessCount: res.AccessCount,
+                    GoodComment: res.GoodComment,
+                    BadComment: res.BadComment,
+                    CommentCount: res.CommentCount,
+                });
+                var pichtmlStr = '';
+
+                $.each(res.Part_PicList, function () {
+                    pichtmlStr += '<div style="float: left; margin-left: 10px; position: relative;">'
+                            + '<div style="overflow: hidden; width: 200px; height: 180px; border: 1px solid rgb(235, 235, 235);">'
+                                + '<img name="ImgUrl" src="' + $(this)[0]["ImgUrl"] + '" style="visibility: visible; width: 200px; height: 150px; margin-left: 0px; margin-top: 15px;">'
+                            + '</div>'
+                            + '<input type="text" style="width: 200px;" placeholder="请输入图片说明" name="ImgDescription" value="' + $(this)[0]["ImgDescription"] + '">'
+                            + '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAOVSURBVHjaYtTUdGdAA4K/fv3U+Pv3rw+QLfT//3+Gf//+vWNiYtjCwsJyAyj2HiT2//8/sGKAAGJB1gkU9Pj581eNnJyctaamMgM/Py8DIyMDw+fPXxlu3rxfdfPmjaPMzIwtTEzMO2B6AAKIBaH5fw4LC1tHeHgQt7u7PYOOjhIDNzcb2IBfv/4x3LjxiGHr1n3WK1duXPPx45sKJiamKSB9AAHECPIC0GZ3ZmbWzQkJkazu7rYMLCyMDD9//gYZCzWcgYGVlRUozsxw9Oh5hv7+Gb8/fXrnC+TvBAggZhERZb7fv3/PdnCwV7C3twT69w+DlpYcw5s3HxkeP34FdP53IPsDg6qqNAMXFxvQIA4GoGXMFy9eVgK6eg1AADH9/ftbW0hIxEpFRQms0MBAlYGDg51BQ0OegZ2dneH58zdAMRUGKSlhBnFxQYY7dx4CvfSHQVBQyAqkFyCAmIWEFDOlpaVtgQHH8O7dB4aXLz8wqKjIMHBysoE1SUqKMCgoSIC90te3lGHNmu0MDx8+Yfjx4xvQmz9eAgQQCzAwhBiBIfX69RugwC+GR4+eAl3yliEx0Y+Bl5eDQU5ODBwG3d0LGdau3QH0AjMwLFiBruQEBjCTEEAAsYBC+du3HwxPnjxnAMY90JCfoLBlePXqLdAAabDNX778AHvl37+/QP9DYubfP0haAAggJlAi+fr1M8Pbt2+Bml4z8PBwMxQURDMoK0uDbf78+QfYJY2N2Qy2thZA//8CGsIMtOg70MI/7wACiAkYkluAfmH48+cPMOHwMbS1FTJoaspB/bwYqHE6w4cP3xn4+DgYWltzgAGqywCMNbABQBdsAQggJmAsX/3+/esxkPNAoX7jxgNQomKYMWMtw65dRxkuXLjGMHHiEobv338x3Lv3DEhDLAO6+hjQq1cBAohRWdkOqOGvOwcHz2Z1dU1WcXEJBgkJYYbbtx+AExIogH/9+s2gra0KDOgPwLTxmOHKlfO/v3z55AtM0jsBAggYjfKg0Lz769eP958/f7FnZ2djAyYUBhERQWBUcgLDhItBWFiY4f37j8AYeshw/frVr1++fCwFal4O8iZAAIENAKdpRoZTwLg99/Llc8VPnz7JffnyFWQwMAa+Mdy/fw+YmW4w3Lp1/eiPH19zgJqXwfIQQACBvQDNiaBsC/K/IDCQNICKfNjYWIVAYQNMH++AIb4FGPrg7IycgwECDADIUZC5UWvTuwAAAABJRU5ErkJggg==" style="position: absolute; top: 0px; right: -5px; cursor: pointer;" onclick="closeparent(this)">'
+                        + '</div>';
+                });
+                $("#yulan_div").html(pichtmlStr);
+
+                var detailhtmlStr = '';
+                $.each(res.Part_ChildrenList, function () {
+                    detailhtmlStr += '<tr ondblclick="NewRowTrEdit(this)" style="cursor: pointer;">'
+                                + '<td>1</td>'
+                                + '<td>' + $(this)[0]["ChildMaterialNumber"] + '</td>'
+                                + '<td>' + $(this)[0]["Remark"] + '</td>'
+                                + '<td nowrap=""><a style="width: 30px; display: none;" href="###" onclick="NewRowSave(this)">保存</a>&nbsp;&nbsp;<a style="width: 30px;" href="###" onclick="NewRowEdit(this)">编辑</a>&nbsp;&nbsp;<a href="###" style="width: 30px;" onclick="NewRowDelete(this)">删除</a></td>'
+                            + '</tr>';
+                });
+                $("#childrentable tbody").html(detailhtmlStr);
+                AddSort();
+                var title = "编辑";
+                var iconinfo = "icon-edit";
+                if (view != undefined) {
+                    $("#DivAddToolBar").hide();
+                    title = "查看信息";
+                    iconinfo = "icon-search";
+                }
+                else {
+                    $("#DivAddToolBar").show();
+                    title = "修改信息";
+                    iconinfo = "icon-edit";
+                }
+                $('#DivAdd').dialog({ iconCls: iconinfo, title: title }).dialog('open');
+
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    }
+
+    function InitGrid(queryData) {
+        $("#grid").datagrid("uncheckAll").datagrid({
+            url: '/Part/Query',
+            idField: 'ID',
+            queryParams: queryData,  //异步查询的参数
+            onLoadSuccess: function (data) {
+                if (data.total == 0) {
+                    //添加一个新数据行，第一列的值为你需要的提示信息，然后将其他列合并到第一列来，注意修改colspan参数为你columns配置的总列数
+                    //$(this).datagrid('appendRow', { Skt_Factory_Name: '<div style="text-align:center;color:red">没有查询到相关数据！</div>' }).datagrid('mergeCells', { index: 0, field: 'Skt_Factory_Name', colspan: 7 })
+                    //隐藏分页导航条，这个需要熟悉datagrid的html结构，直接用jquery操作DOM对象，easyui datagrid没有提供相关方法隐藏导航条
+                    $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
+
+                    $("#emptymsgdiv").show();
+                }
+                    //如果通过调用reload方法重新加载数据有数据时显示出分页导航容器
+                else {
+                    $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
+                    $("#emptymsgdiv").hide();
+                }
+            },
+            toolbar: '#DivGridToolBar',
+
+            onDblClickRow: function (rowIndex, rowData) {
+                $('#grid').datagrid('uncheckAll');
+                $('#grid').datagrid('checkRow', rowIndex);
+                ShowEditOrViewDialog();
+            }
+        });
+        var p = $('#grid').datagrid('getPager');
+        (p).pagination({
+            beforePageText: '第',//页数文本框前显示的汉字  
+            afterPageText: '页    共 {pages} 页',
+            displayMsg: '共{total}条数据',
+
+        });
+    }
+
+    $(function () {
+        jQuery("#btnupload").click(function () {
+            jQuery("#user_log").click();
+        });
+
+        //grid自适应外围宽度
+        jQuery(window).resize(function () {
+            jQuery('#grid').datagrid("resize");
+        });
+
+        //回车搜索
+        jQuery("#fmSearch").bind("keydown", function (e) {
+            var key = e.which;
+            if (key == 13) {
+                $('#btnSearch').click();
+            }
+        });
+
+
+        $('#btnSearch').click(function () {
+            //得到用户输入的参数，取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+            var queryData = {};
+            var fields = $("#fmSearch").serializeArray();
+            jQuery.each(fields, function (i, field) {
+                queryData[field.name] = field.value;
+            });
+
+            InitGrid(queryData);
+            return false;
+        });
+
+        $('#btnSearch').click();
+    })
+</script>
+
+
+
+@*<div id="dlg" class="easyui-dialog" title="Complex Toolbar on Dialog" style="width: 400px; height: 200px; padding: 10px" data-options="			iconCls: 'icon-save',			toolbar: '#dlg-toolbar'		">The dialog content.</div>
+<div id="dlg-toolbar">
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">Edit</a>			</td>
+            <td>
+                <div class="btn-separator"></div>
+            </td>
+            <td><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-help',plain:true">Help</a>			</td>
+        </tr>
+    </table>
+</div>*@
+
+

@@ -1,0 +1,384 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/main.cshtml";
+}
+@*<style type="text/css">
+    .datagrid-row-selected {
+background: ;
+color:;
+}
+
+</style>*@
+<div class="searchdiv">
+    <fieldset>
+        <legend>信息查询</legend>
+        <form id="fmSearch" method="post">
+            <table>
+                <tr>
+                    <td style="width: 150px; text-align: right;">公司名称:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="CompanyName" /></td>
+                    <td style="width: 150px; text-align: right;">职务:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Post" /></td>
+                    <td style="width: 150px; text-align: right;">姓名:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="FullName" /></td>
+
+                    <td style="width: 150px; text-align: right;">邮箱:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Email" /></td>
+                </tr>
+                <tr>
+                    <td style="width: 150px; text-align: right;">昵称:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Nickname" /></td>
+                    <td style="width: 150px; text-align: right;">手机:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Phone" /></td>
+
+                    <td>
+
+                        <a id="btnSearch" href="###" class="easyui-linkbutton"
+                            data-options="iconCls:'icon-search'">&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+
+<table id="grid" style="width: 100%;" class="easyui-datagrid" data-options="
+                title: '标题',
+                iconCls: 'icon-view',
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 15,
+                pageList: [10, 15, 20],
+                rownumbers: true,
+                singleSelect: true,
+                sortOrder: 'asc',
+                remoteSort: false">
+    <thead>
+        <tr>
+            <th data-options="field: 'ID', hidden: true, align: 'center'">主键</th>
+            <th data-options="field: 'CompanyName', align: 'center'">公司名称</th>
+            <th data-options="field: 'Post', align: 'center' ">职务</th>
+            <th data-options="field: 'FullName', align: 'center'">姓名</th>
+            <th data-options="field: 'Email', align: 'center'">邮箱</th>
+            <th data-options="field: 'Nickname', align: 'center'">昵称</th>
+            <th data-options="field: 'Phone', align: 'center' ">手机</th>
+            <th data-options="field: 'AuditStatus', align: 'center',formatter:FormatterAuditStatus">审核状态</th>
+            <th data-options="field:'_operate',align:'center',formatter:FormatOper">操作</th>
+        </tr>
+    </thead>
+</table>
+<div style="text-align: center; width: 100%; color: red; display: none;" id="emptymsgdiv">没有查询到相关数据</div>
+<!--------------------------添加/修改信息的弹出层---------------------------->
+<div id="DivAdd" class="easyui-dialog" style="width: 860px; height: 190px; padding: 10px 20px"
+    closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit',buttons: '#dlg-buttons'">
+    <form id="fmDetail" method="post" novalidate enctype="multipart/form-data">
+        <input name="ID" type="hidden" value="" />
+        <table>
+            <tr>
+                <td style="width: 150px; text-align: right;">公司名称:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="CompanyName" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right;">职务:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="Post" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right;">姓名:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="FullName" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right;">邮箱:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="Email" validtype="email" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right;">昵称:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="Nickname" />
+                </td>
+                <td style="width: 150px; text-align: right;">手机:</td>
+                <td style="width: 150px;">
+
+
+                    <input type="text" class="easyui-numberbox" name="Phone" required="required" validtype="mobile" maxlength="11" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="text-align: right; padding-top: 10px" id="DivAddToolBar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" onclick="SaveEntity()">确定</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+    function Audit(index, status) {
+        $.messager.confirm("操作提示", "您确定审核这条数据吗？", function (data) {
+            if (data) {
+                $('#grid').datagrid('selectRow', index);// 关键在这里  
+                var row = $('#grid').datagrid('getSelected');
+                if (row) {
+                    $.post("/User/Audit", { "ID": row.ID, "AuditStatus": status }, function (msg) {
+                        if (msg == "ok") {
+                            $.messager.alert("操作提示", "审核成功！", "info");
+                        
+                            $('#btnSearch').click();
+                        }
+                        else {
+                            $.messager.alert("操作提示", "审核失败！请联系管理员", "error");
+                        }
+                    })
+                }
+            }
+        });
+    }
+
+    function FormatOper(val, row, index) {
+        if (row.AuditStatus == "0") {
+            return '<a href="#" onclick="Audit(' + index + ',1)">审核通过</a>&nbsp;&nbsp;<a href="#" onclick="Audit(' + index + ',2)">审核不通过</a>';
+        }
+        else {
+            return '';
+        }
+    }
+    //保存
+    function SaveEntity() {
+        $('#fmDetail').form('submit', {
+            url: "/User/Save",
+            onSubmit: function (param) {                //提交时触发
+                var flag = $(this).form('validate');    //是否通过验证 
+                if (flag) {
+                    $('#grid').datagrid("loading"); //如果通过验证让datagrid显示载入状态
+                }
+                return flag;
+            },
+            success: function (res) {
+                if (res == "ok") {
+                    $.messager.alert("操作提示", "保存成功！", "info");
+                    $('#DivAdd').dialog('close');         //关闭弹出框
+                    $('#fmDetail').form('clear');              //清除表单数据。
+                    $('#btnSearch').click(); //重新加载数据
+                }
+                else {
+                    $.messager.alert("操作提示", "保存失败！", "error");
+
+                }
+            }
+        })
+    }
+    //删除
+    function Delete() {
+
+        $.messager.confirm("操作提示", "您确定删除这条数据吗？", function (data) {
+            if (data) {
+                var row = $('#grid').datagrid('getSelected'); //获取选中行
+                if (!row) {                                       //没有选中行
+                    $.messager.alert('提示', '请选择一行进行操作!', 'info');
+                    return false;
+                }
+                $.ajax({
+                    url: "/User/Delete",
+                    type: "POST",
+                    data: { "ID": row["ID"] },
+                    success: function (res) {
+                        if (res == "ok") {
+                            $.messager.alert("操作提示", "操作成功！", "info");
+                            $('#btnSearch').click();
+                        }
+                        else {
+                            $.messager.alert("操作提示", "操作失败！", "error");
+                            return false;
+                        }
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    }
+                })
+            }
+        });
+
+
+    }
+    //添加显示弹框
+    function ShowAddDialog() {
+        $('#fmDetail').form('load', {
+            ID: '',
+            CompanyName: '',
+            Post: '',
+            FullName: '',
+            Email: '',
+            Nickname: '',
+            Phone: '',
+            PassWord: '',
+            AuditStatus: ''
+        });
+        $('#DivAdd').dialog({
+            title: '增加',
+            iconCls: 'icon-add'
+        }).dialog('open');
+    }
+
+    $(function () {
+
+        jQuery(window).resize(function () {
+            jQuery('#grid').datagrid("resize");
+        });
+            
+        jQuery("#fmSearch").bind("keydown", function (e) {
+            var key = e.which;
+            if (key == 13) {
+                $('#btnSearch').click();
+            }
+        });
+        function ShowEditOrViewDialog(view) {
+            var row = $('#grid').datagrid('getSelected'); //获取选中行
+            if (!row) {                                       //没有选中行
+                $.messager.alert('提示', '请选择一行进行操作!', 'info');
+                return false;
+            }
+            //取值赋值 
+            $.ajax({
+                url: "/User/Get_Details",
+                type: "POST",
+                dataType: "json",
+                data: { "ID": row["ID"] },
+                success: function (res) {
+                    $('#fmDetail').form('load', {
+                        ID: res.ID,
+                        CompanyName: res.CompanyName,
+                        Post: res.Post,
+                        FullName: res.FullName,
+                        Email: res.Email,
+                        Nickname: res.Nickname,
+                        Phone: res.Phone,
+                        PassWord: res.PassWord,
+                        AuditStatus: res.AuditStatus
+                    });
+                    var title = "编辑";
+                    var iconinfo = "icon-edit";
+                    if (view != undefined) {
+                        $("#DivAddToolBar").hide();
+                        title = "查看信息";
+                        iconinfo = "icon-search";
+                    }
+                    else {
+                        $("#DivAddToolBar").show();
+                        title = "修改信息";
+                        iconinfo = "icon-edit";
+                    }
+                    $('#DivAdd').dialog({ iconCls: iconinfo, title: title }).dialog('open');
+
+                },
+                error: function (error) {
+                    alert(JSON.stringify(error));
+                }
+            });
+        }
+
+        function InitGrid(queryData) { 
+            $("#grid").datagrid("uncheckAll").datagrid({
+                url: '/User/Query',
+                idField: 'ID',
+                queryParams: queryData,  //异步查询的参数 
+                onLoadSuccess: function (data) {
+                    if (data.total == 0) {
+                        //隐藏分页
+                        $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
+                        $("#emptymsgdiv").show();
+                    }
+                        //如果通过调用reload方法重新加载数据有数据时显示出分页导航容器
+                    else {
+                        $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
+                        $("#emptymsgdiv").hide();
+                    }
+                },
+                toolbar: [
+             {
+                 id: 'btnAdd',
+                 text: '添加',
+                 iconCls: 'icon-add',
+                 handler: function () {
+                     ShowAddDialog();//实现添加记录的页面
+                 }
+             }, '-',
+                 {
+                     id: 'btnEdit',
+                     text: '修改',
+                     iconCls: 'icon-edit',
+                     handler: function () {
+                         ShowEditOrViewDialog();//实现修改记录的方法
+                     }
+                 },
+                 '-', {
+                     id: 'btnDelete',
+                     text: '删除',
+                     iconCls: 'icon-remove',
+                     handler: function () {
+                         Delete();//实现直接删除数据的方法
+                     }
+                 },
+                 '-', {
+                     id: 'btnView',
+                     text: '查看',
+                     iconCls: 'icon-search',
+                     handler: function () {
+                         ShowEditOrViewDialog("view");//实现查看记录详细信息的方法
+                     }
+                 }, '-', {
+                     id: 'btnReload',
+                     text: '刷新',
+                     iconCls: 'icon-reload',
+                     handler: function () {
+                         //实现刷新栏目中的数据
+                         $("#grid").datagrid("reload");
+                     }
+                 }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
+                }
+            });
+            var p = $('#grid').datagrid('getPager');
+            (p).pagination({
+                beforePageText: '第',//页数文本框前显示的汉字  
+                afterPageText: '页    共 {pages} 页',
+                displayMsg: '共{total}条数据',
+
+            });
+        }
+
+        $('#btnSearch').click(function () {
+            //得到用户输入的参数，取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+            var queryData = {};
+            var fields = $("#fmSearch").serializeArray();
+            jQuery.each(fields, function (i, field) {
+                queryData[field.name] = field.value;
+            });
+
+            InitGrid(queryData);
+            return false;
+        });
+
+        $('#btnSearch').click();
+    })
+</script>
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+2015-08-06 错误信息:从客户端(Content="<div style="text-ali...")中检测到有潜在危险的 Request.Form 值。  URL:/TechnologyArticle/Save
+从客户端(Content="<div style="text-ali...")中检测到有潜在危险的 Request.Form 值。
+从客户端(ExcludeAdvice="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+从客户端(ExcludeAdvice="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+从客户端(ExcludeAdvice="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+从客户端(Content="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+从客户端(Content="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+从客户端(Content="<span style="backgro...")中检测到有潜在危险的 Request.Form 值。
+运算符“==”无法应用于“string”和“int”类型的操作数
+运算符“==”无法应用于“string”和“int”类型的操作数

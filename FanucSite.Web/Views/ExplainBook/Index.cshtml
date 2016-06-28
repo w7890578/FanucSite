@@ -1,0 +1,400 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/main.cshtml";
+}
+<div class="searchdiv">
+    <fieldset>
+        <legend>信息查询</legend>
+        <form id="fmSearch" method="post">
+            <table>
+                <tr>
+                    <td style="width: 150px; text-align: right;">说明书编号:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="BookNumber" /></td>
+                    <td style="width: 150px; text-align: right;">名称:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="BookName" /></td>
+                   @* <td style="width: 150px; text-align: right;">版本:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Version" /></td>
+                    <td style="width: 150px; text-align: right;">语言:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Language" /></td>*@
+                 
+                    <td style="width: 150px; text-align: right;">一级分类:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="OneLevelSort" /></td>
+                    <td style="width: 150px; text-align: right;">二级分类:</td>
+                   <td style="width: 150px;">
+                        <input type="text" name="TwoLeverSort" /></td>
+                  @*  <td style="width: 150px; text-align: right;">下载链接:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="DownLoadLink" /></td>
+                    <td style="width: 150px; text-align: right;">备注:</td>
+                    <td style="width: 150px;">
+                        <input type="text" name="Remark" /></td> *@
+                    <td>
+                        <a id="btnSearch" href="###" class="easyui-linkbutton"
+                            data-options="iconCls:'icon-search'">&nbsp;&nbsp;查&nbsp;&nbsp;询&nbsp;&nbsp;
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </fieldset>
+</div>
+<table id="grid" style="width: 100%;">
+</table>
+<div style="text-align: center; width: 100%; color: red; display: none;" id="emptymsgdiv">没有查询到相关数据</div>
+<!--------------------------添加/修改信息的弹出层---------------------------->
+<div id="DivAdd" class="easyui-dialog" style="width: 750px; height: 340px; padding: 10px 20px"
+    closed="true" resizable="true" modal="true" data-options="iconCls: 'icon-edit',buttons: '#dlg-buttons'">
+    <form id="fmDetail" method="post" novalidate enctype="multipart/form-data">
+        <input name="ID" type="hidden" value="" />
+        <table>
+            <tr>
+                <td style="width: 150px; text-align: right;">说明书编号:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="BookNumber" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right;">名称:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="BookName" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right;">版本:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="Version" required="required" />
+                </td>
+                <td style="width: 150px; text-align: right;">语言:</td>
+                <td style="width: 150px;">
+                    <select class="easyui-combobox" name="Language" required="required" style="width: 120px;">
+                        <option>中文</option>
+                        <option>英文</option>
+                        <option>日文</option>
+                    </select>
+
+                </td>
+                <tr>
+                    <td style="width: 150px; text-align: right;">一级分类:</td>
+                    <td style="width: 150px;">
+                        <select class="easyui-combobox" name="OneLevelSort" required="required">
+                            <option>操作说明书</option>
+                        </select>
+                    </td>
+                    <td style="width: 150px; text-align: right;">二级分类:</td>
+                    <td style="width: 150px;">
+                        <select class="easyui-combobox" name="TwoLeverSort" style="width: 120px;">
+                            <option>0iF</option>
+                        </select>
+                    </td>
+                </tr>
+            <tr>
+                <td style="width: 150px; text-align: right;">下载链接:</td>
+                <td colspan="3">
+                    <input type="text" class="easyui-validatebox" name="DownLoadLink" required="required"
+                        style="width: 450px;" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right;">提取密码:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="ExtractPwd" />
+                </td>
+                <td style="width: 150px; text-align: right;">解压密码:</td>
+                <td style="width: 150px;">
+                    <input type="text" class="easyui-validatebox" name="UnzipPwd" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="padding-left: 110px;">
+                    <label>
+                        <input type="checkbox" value="1" name="IsLoginCheck" id="IsLoginCheck" />
+                        登录查看</label></td>
+            </tr>
+            <tr>
+                <td style="width: 150px; text-align: right;">备注:</td>
+                <td colspan="3">
+                    <input type="text" class="easyui-validatebox" name="Remark" style="width: 450px;" />
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div style="text-align: right; padding-top: 10px" id="DivAddToolBar">
+
+        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnAddOK" iconcls="icon-ok" onclick="SaveEntity()">确定</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="javascript:$('#DivAdd').dialog('close')">关闭</a>
+    </div>
+
+</div>
+<script type="text/javascript">
+    //保存
+    function SaveEntity() {
+        $('#fmDetail').form('submit', {
+            url: "/ExplainBook/Save",
+            onSubmit: function (param) {                //提交时触发
+                var flag = $(this).form('validate');    //是否通过验证 
+                if (flag) {
+                    $('#grid').datagrid("loading"); //如果通过验证让datagrid显示载入状态
+                }
+                return flag;
+            },
+            success: function (res) {
+                if (res == "ok") {
+                    $.messager.alert("操作提示", "保存成功！", "info");
+                    $('#DivAdd').dialog('close');         //关闭弹出框
+                    $('#fmDetail').form('clear');              //清除表单数据。
+                    $('#btnSearch').click(); //重新加载数据
+                }
+                else {
+                    $.messager.alert("操作提示", "保存失败！", "error");
+
+                }
+            }
+        })
+    }
+    //删除
+    function Delete() {
+
+        $.messager.confirm("操作提示", "您确定删除这条数据吗？", function (data) {
+            if (data) {
+                var row = $('#grid').datagrid('getSelected'); //获取选中行
+                if (!row) {                                       //没有选中行
+                    $.messager.alert('提示', '请选择一行进行操作!', 'info');
+                    return false;
+                }
+                $.ajax({
+                    url: "/ExplainBook/Delete",
+                    type: "POST",
+                    data: { "ID": row["ID"] },
+                    success: function (res) {
+                        if (res == "ok") {
+                            $.messager.alert("操作提示", "操作成功！", "info");
+                            $('#btnSearch').click();
+                        }
+                        else {
+                            $.messager.alert("操作提示", "操作失败！", "error");
+                            return false;
+                        }
+                    },
+                    error: function (error) {
+                        alert(JSON.stringify(error));
+                    }
+                })
+            }
+        });
+
+
+    }
+    //添加显示弹框
+    function ShowAddDialog() {
+        $('#fmDetail').form('load', {
+            ID: '',
+            BookNumber: '',
+            BookName: '',
+            Version: '',
+            Language: '',
+            OneLevelSort: '',
+            TwoLeverSort: '',
+            DownLoadLink: '',
+            ExtractPwd: '',
+            UnzipPwd: '',
+            IsLoginCheck: '',
+            Remark: '',
+            AccessCount: '',
+        });
+        $('#DivAdd').dialog({
+            title: '增加',
+            iconCls: 'icon-add'
+        }).dialog('open');
+    }
+
+    $(function () {
+        function ShowEditOrViewDialog(view) {
+            var row = $('#grid').datagrid('getSelected'); //获取选中行
+            if (!row) {                                       //没有选中行
+                $.messager.alert('提示', '请选择一行进行操作!', 'info');
+                return false;
+            }
+            //取值赋值 
+            $.ajax({
+                url: "/ExplainBook/Get_Details",
+                type: "POST",
+                dataType: "json",
+                data: { "ID": row["ID"] },
+                success: function (res) {
+                    $('#fmDetail').form('load', {
+                        ID: res.ID,
+                        BookNumber: res.BookNumber,
+                        BookName: res.BookName,
+                        Version: res.Version,
+                        Language: res.Language,
+                        OneLevelSort: res.OneLevelSort,
+                        TwoLeverSort: res.TwoLeverSort,
+                        DownLoadLink: res.DownLoadLink,
+                        ExtractPwd: res.ExtractPwd,
+                        UnzipPwd: res.UnzipPwd,
+                        IsLoginCheck: res.IsLoginCheck,
+                        Remark: res.Remark,
+                        AccessCount: res.AccessCount,
+                    });
+                    //alert(res.IsLoginCheck=="1");
+                    //if (res.IsLoginCheck == "1") {
+                    //    jQuery("#IsLoginCheck").attr("checked", true);
+                    //}
+                    //else {
+                    //    jQuery("#IsLoginCheck").attr("checked", false);
+
+                    //}
+
+                    var title = "编辑";
+                    var iconinfo = "icon-edit";
+                    if (view != undefined) {
+                        $("#DivAddToolBar").hide();
+                        title = "查看信息";
+                        iconinfo = "icon-search";
+                    }
+                    else {
+                        $("#DivAddToolBar").show();
+                        title = "修改信息";
+                        iconinfo = "icon-edit";
+                    }
+                    $('#DivAdd').dialog({ iconCls: iconinfo, title: title }).dialog('open');
+
+                },
+                error: function (error) {
+                    alert(JSON.stringify(error));
+                }
+            });
+        }
+
+        function InitGrid(queryData) {
+
+            $('#grid').datagrid({
+                url: '/ExplainBook/Query',
+                title: '说明书信息维护',
+                iconCls: 'icon-view',
+                nowrap: true,
+                autoRowHeight: true,
+                striped: true,
+                collapsible: true,
+                pagination: true,
+                pageSize: 15,
+                pageList: [10, 15, 20],
+                rownumbers: true,
+                singleSelect: true,
+                sortOrder: 'asc',
+                remoteSort: false,
+                idField: 'ID',
+                queryParams: queryData,  //异步查询的参数
+                columns: [[
+                         { title: '主键', field: 'ID', hidden: true },
+                         { title: '说明书编号', field: 'BookNumber', align: 'center' },
+                         { title: '名称', field: 'BookName', align: 'center' },
+                         { title: '版本', field: 'Version', align: 'center' },
+                         { title: '语言', field: 'Language', align: 'center' },
+                         { title: '一级分类', field: 'OneLevelSort', align: 'center' },
+                         { title: '二级分类', field: 'TwoLeverSort', align: 'center' },
+                         { title: '下载链接', field: 'DownLoadLink', align: 'center' },
+                         { title: '提取密码', field: 'ExtractPwd', align: 'center' },
+                         { title: '解压密码', field: 'UnzipPwd', align: 'center' },
+                         {
+                             title: '登录查看', field: 'IsLoginCheck', align: 'center', formatter: function (val, row, index) {
+                                 return val == "0" ? "否" : "是";
+                             }
+                         },
+                         { title: '备注', field: 'Remark', align: 'center' },
+                         { title: '访问量', field: 'AccessCount', align: 'center' },
+                ]],
+                onLoadSuccess: function (data) {
+                    if (data.total == 0) {
+                        //隐藏分页
+                        $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').hide();
+                        $("#emptymsgdiv").show();
+                    }
+                        //如果通过调用reload方法重新加载数据有数据时显示出分页导航容器
+                    else {
+                        $(this).closest('div.datagrid-wrap').find('div.datagrid-pager').show();
+                        $("#emptymsgdiv").hide();
+                    }
+                },
+                toolbar: [
+             {
+                 id: 'btnAdd',
+                 text: '添加',
+                 iconCls: 'icon-add',
+                 handler: function () {
+                     ShowAddDialog();//实现添加记录的页面
+                 }
+             }, '-',
+                 {
+                     id: 'btnEdit',
+                     text: '修改',
+                     iconCls: 'icon-edit',
+                     handler: function () {
+                         ShowEditOrViewDialog();//实现修改记录的方法
+                     }
+                 },
+                 '-', {
+                     id: 'btnDelete',
+                     text: '删除',
+                     iconCls: 'icon-remove',
+                     handler: function () {
+                         Delete();//实现直接删除数据的方法
+                     }
+                 },
+                 '-', {
+                     id: 'btnView',
+                     text: '查看',
+                     iconCls: 'icon-search',
+                     handler: function () {
+                         ShowEditOrViewDialog("view");//实现查看记录详细信息的方法
+                     }
+                 }, '-', {
+                     id: 'btnReload',
+                     text: '刷新',
+                     iconCls: 'icon-reload',
+                     handler: function () {
+                         //实现刷新栏目中的数据
+                         $("#grid").datagrid("reload");
+                     }
+                 }],
+                onDblClickRow: function (rowIndex, rowData) {
+                    $('#grid').datagrid('uncheckAll');
+                    $('#grid').datagrid('checkRow', rowIndex);
+                    ShowEditOrViewDialog();
+                }
+            });
+            var p = $('#grid').datagrid('getPager');
+            (p).pagination({
+                beforePageText: '第',//页数文本框前显示的汉字  
+                afterPageText: '页    共 {pages} 页',
+                displayMsg: '共{total}条数据',
+
+            });
+            $("#grid").datagrid("uncheckAll");
+        }
+
+        $('#btnSearch').click(function () {
+            //得到用户输入的参数，取值有几种方式：$("#id").combobox('getValue'), $("#id").datebox('getValue'), $("#id").val()
+            var queryData = {};
+            var fields = $("#fmSearch").serializeArray();
+            jQuery.each(fields, function (i, field) {
+                queryData[field.name] = field.value;
+            });
+
+            InitGrid(queryData);
+            return false;
+        });
+
+        $('#btnSearch').click();
+    })
+</script>
+
+
+
+
+
+

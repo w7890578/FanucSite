@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+
+<html lang="zh-cn">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FunacBook</title>
+    <link href='/Plug/themes/bootstrap/easyui.css' rel='stylesheet' id='linkThemes' />
+    <link href="/Css/main.css" rel="stylesheet" />
+    <link href="/Css/icon.css" rel="stylesheet" />
+    <script src="/Plug/jquery.min.js"></script>
+    <script src="/Plug/jquery.easyui.min.js"></script>
+    <script src="/Plug/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/Scripts/common.js?v=4"></script>
+    @* /*style="background-color: #D2E0F2;"*/*@
+</head>
+<body style="margin: 0px; padding: 0px; border: 0 none;">
+    @RenderBody()
+</body>
+</html>
+<script type="text/javascript">
+
+    //全局的ajax访问，处理ajax清求时cookie超时  
+    //$.ajaxSetup({
+    //    beforeSend: function (xhr) {
+    //        var user = getCookie("UserInfo");
+    //        if (user == undefined || user == null || user.length <= 0) {
+    //            alert("登录超时！请重新登录");
+    //            window.top.location.href = "/Login/Index.html";
+    //        }
+    //    },
+    //    contentType: "application/x-www-form-urlencoded;charset=utf-8",
+    //    complete: function (XMLHttpRequest, textStatus) {
+    //        var cookiestatus = XMLHttpRequest.getResponseHeader("cookiestatus"); //通过XMLHttpRequest取得响应头，sessionstatus，  
+    //        if (cookiestatus == "timeout") {
+    //            //如果超时就处理 ，指定要跳转的页面   
+    //            alert("登录超时！请重新登录");
+    //            window.top.location.href = "/Login/Index.html";
+    //        }
+    //    }
+    //})
+
+</script>

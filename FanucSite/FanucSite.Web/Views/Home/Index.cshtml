@@ -1,0 +1,79 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FunacBook</title>
+    <link href='/Plug/themes/bootstrap/easyui.css' rel='stylesheet' id='linkThemes' />
+
+    <link href="/Css/main.css" rel="stylesheet" />
+    <link href="/Css/icon.css" rel="stylesheet" />
+    <script src="/Plug/jquery.min.js"></script>
+    <script src="/Plug/jquery.easyui.min.js"></script>
+    <script src="/Plug/locale/easyui-lang-zh_CN.js"></script>
+    <script src="/Scripts/common.js?v=4"></script>
+</head>
+
+<body class="easyui-layout">
+    <div data-options="region:'north',split:false" style="height: 80px;"></div>
+    <div data-options="region:'south',split:false" style="height: 50px;"></div>
+
+    <div data-options="region:'west',title:'West',split:true" style="width: 200px;"></div>
+
+    <div data-options="region:'center',title:'center title'" style="height:100%;">
+        <iframe style="width:100%;height:auto;" scrolling="auto" frameborder="0" src="http://www.baidu.com"></iframe>
+    </div>
+</body>
+</html>
+<script type="text/ecmascript">
+    /* 打开一个标签 */
+    function OpenTab(title, url, icon) {
+        /**
+        如果这个标题的标签存在，则选择该标签
+        否则添加一个标签到标签组
+        */
+        if ($("#tabs").tabs('exists', title)) {
+            $("#tabs").tabs('select', title);
+        } else {
+            $("#tabs").tabs('add', {
+                title: title,
+                content: createTabContent(url),
+                closable: true,
+                icon: icon
+            });
+        }
+    }
+
+    /* 生成标签内容 */
+    function createTabContent(url) {
+        return '<div style="width:100%;height:100%;"><iframe style="width:100%;height:100%;" scrolling="auto" frameborder="0" src="' + url + '"></iframe></div>';
+    }
+    $(function () {
+        $("#menu a").click(function () {
+            var title = $(this).text();
+            var url = $(this).attr("rel");
+            var icon = $(this).attr("icon");
+            OpenTab(title, url, icon);
+            return false;    //使超链接的单击事件失效
+        });
+    });
+
+</script>
+@*<script type="text/javascript">   
+    //jQuery(function () {
+        var content = '<div style="width:100%;height:100%;"><iframe scrolling="auto"  framespacing=0 marginheight=0 marginwidth=0 frameborder="0" id="ParentFrame"   src="http://www.baidu.com" style="width:100%;height:99%;"></iframe></div>';
+        $('#tb').tabs('add', {
+            title: '首页',
+            content: content,
+            closable: true,
+            width: 'auto',
+            height: 'auto',
+            padding: '0px'  
+        });
+    //})
+
+</script>*@
